@@ -1,0 +1,33 @@
+{
+  "name": "heros",
+  "version": "1.0.0",
+  "description": "superheroes rest API (KONEXIO exercise)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NickoMaill/Heros-sqlVersion.git"
+  },
+  "keywords": [
+    "hero",
+    "supheroes",
+    "sever",
+    "http",
+    "API",
+    "rest"
+  ],
+  "author": "Nicolas Maillols",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NickoMaill/Heros-sqlVersion/issues"
+  },
+  "homepage": "https://github.com/NickoMaill/Heros-sqlVersion#readme",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "pg": "^8.7.3"
+  }
+}
