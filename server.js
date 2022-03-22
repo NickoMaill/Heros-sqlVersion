@@ -9,6 +9,7 @@ dotenv.config({
 const debug = require("./middlewares/debug");
 const transformName = require("./middlewares/transformName");
 const findHero = require("./middlewares/findHero");
+const verifyName = require('./middlewares/verifyHero')
 
 app.use(express.json(), debug);
 
@@ -40,19 +41,25 @@ app.get("/heroes/:name", findHero, async (req, res) => {
 });
 
 app.get("/heroes/:name/powers", findHero, async (req, res) => {
-    const hero = await Postgres.query("SELECT power FROM heroes WHERE heroes.name=$1", [req.hero.name]);
-
 	try {
 		hero;
+	} catch (err) {}
+	res.json(hero.rows);
+});
+
+app.post("/heroes", transformName, verifyName, async (req, res) => {
+
+	try {
+		await Postgres.query(
+			"INSERT INTO heroes(name, power, color, isAlive, age, image) VALUES($1, $2, $3, $4, $5, $6)",
+			[req.body.name, req.body.power, req.body.color, req.body.isAlive, req.body.age, req.body.image]
+		);
 	} catch (err) {
 		return res.status(400).json({
 			message: "An error happened..., Hero not found",
 		});
 	}
-	res.json(hero.rows);
-});
-
-app.post("/heroes",transformName, async (req, res) => {
+	res.json({ message: "hero added" });
 });
 
 // app.patch("/heroes/:name/powers", findHero, (req, res) => {
