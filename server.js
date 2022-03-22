@@ -22,11 +22,30 @@ app.get("/heroes", async (_req, res) => {
 			message: "An error happened...",
 		});
 	}
+
 	res.json(heroes.rows);
 });
 
-// app.get("/heroes/:name", findHero, (req, res) => {
-// })
+app.get("/heroes/:name", findHero, async (req, res) => {
+    
+    if (req.hero === undefined) {
+        return res.status(404).json({
+            message: "hero note found",
+		});
+	} else {
+        
+        const hero = await Postgres.query("SELECT * FROM heroes WHERE heroes.name=$1", [req.hero.name]);
+        try {
+            hero;
+        } catch (err) {
+            return res.status(404).json({
+                message: "An error happened..., Hero not found",
+            });
+        }
+        res.json(hero.rows);
+    }
+
+});
 
 // app.get("/heroes/:name/powers", findHero, (req, res) => {
 // })
