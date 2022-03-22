@@ -6,10 +6,10 @@ const dotenv = require("dotenv");
 dotenv.config({
 	path: "./config.env",
 });
-const debug = require("./middlewares/debug");
-const transformName = require("./middlewares/transformName");
-const findHero = require("./middlewares/findHero");
-const verifyName = require('./middlewares/verifyHero')
+const debug = require("./middleware/debug");
+const transformName = require("./middleware/transformName");
+const findHero = require("./middleware/findHero");
+const verifyName = require('./middleware/verifyHero')
 
 app.use(express.json(), debug);
 
@@ -29,18 +29,20 @@ app.get("/heroes", async (_req, res) => {
 
 app.get("/heroes/:name", findHero, async (req, res) => {
 	const hero = await Postgres.query("SELECT * FROM heroes WHERE heroes.name=$1", [req.hero.name]);
-
+    
 	try {
-		hero;
+        hero;
 	} catch (err) {
-		return res.status(400).json({
-			message: "An error happened..., Hero not found",
+        return res.status(400).json({
+            message: "An error happened..., Hero not found",
 		});
 	}
 	res.json(hero.rows);
 });
 
 app.get("/heroes/:name/powers", findHero, async (req, res) => {
+    const hero = await Postgres.query("SELECT power FROM heroes WHERE heroes.name=$1", [req.hero.name]);
+    
 	try {
 		hero;
 	} catch (err) {}
@@ -62,9 +64,20 @@ app.post("/heroes", transformName, verifyName, async (req, res) => {
 	res.json({ message: "hero added" });
 });
 
-// app.patch("/heroes/:name/powers", findHero, (req, res) => {
-// });
+app.patch("/heroes/:name/powers", findHero, async (req, res) => {
 
+    try {
+        await Postgres.query("UPDATE heroes SET power = array_append( power, $1) WHERE heroes.name = $2;",[req.body.power, req.params.name]);
+    } catch (err) {
+        return res.status(400).json({
+			message: "An error happened..., Hero not found",
+		});
+    }
+
+    res.json({
+        message: "power added"
+    })
+})
 //copy and paste this in postman
 
 // {
